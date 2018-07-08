@@ -3,9 +3,8 @@
 This tutorial has been tested for Ubuntu 18.04
 
 
-## Setting up Docker
+## Set up Docker
 For further explanations visit [Docker documentation](https://docs.docker.com/install/linux/docker-ce/ubuntu/).
-
 
 ### Set up the repository
 1. Update the apt package index  
@@ -33,10 +32,36 @@ sub   4096R/F273FCD8 2017-02-22`
 $(lsb_release -cs) \
 stable"`
 
-
 ### Install Docker CE
 1. Install the latest version of Docker CE  
-`sudo apt-get install docker-ce`
+`sudo apt-get install -y docker-ce`
 2. Verify that Docker CE is installed correctly by running the _hello-world_ image  
 `sudo docker run hello-world`
 
+
+## Set up MongoDB and Redis
+1. Installation  
+`sudo apt-get install -y mongodb`  
+`sudo apt-get install -y redis-server`
+2. Configure MongoDB  
+`sudo vim /etc/mongodb.conf`  
+Modify: `bind_ip = 172.17.0.1`
+3. Configure Redis  
+`sudo vim /etc/redis/redis.conf`  
+Modify: `bind 172.17.0.1`
+4. Restart services
+`sudo service mongodb restart`  
+`sudo service redis-server restart`
+
+## Set up ShareLaTeX
+1. Pull down the latest version of ShareLaTeX  
+`sudo docker pull sharelatex/sharelatex`
+2. DOCKER COMPOSE (CONTINUE)
+
+
+## Run ShareLaTeX
+1. Start up the container  
+`sudo docker run -d -v ~/sharelatex_data:/var/lib/sharelatex -p 80:80 --name=sharelatex --env SHARELATEX_SITE_URL=$domain --env SHARELATEX_APP_NAME=LaTeX sharelatex/sharelatex`
+2. Create new user (in this example, _joe@example.com_ is our username)  
+`sudo docker exec sharelatex /bin/bash -c "cd /var/www/sharelatex/web; grunt create-admin-user --email joe@example.com"`
+3. Click on the link on the output of previous command to set up the password
