@@ -13,7 +13,7 @@ sudo apt-get update
 ```
 2. Install packages to allow apt to use a repository over HTTPS
 ```
-sudo apt-get install -y\
+sudo apt-get install -y \
 apt-transport-https \
 ca-certificates \
 curl \
