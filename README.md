@@ -13,7 +13,7 @@ sudo apt-get update
 ```
 2. Install packages to allow apt to use a repository over HTTPS
 ```
-sudo apt-get install \
+sudo apt-get install -y\
 apt-transport-https \
 ca-certificates \
 curl \
@@ -67,12 +67,14 @@ sudo apt-get install -y redis-server
 ```
 sudo vim /etc/mongodb.conf
 ```
-Modify: `bind_ip = 172.17.0.1`
+Modify: `bind_ip = 172.17.0.1`  
+
 3. Configure Redis
 ```
 sudo vim /etc/redis/redis.conf
 ```
-Modify: `bind 172.17.0.1`
+Modify: `bind 172.17.0.1`  
+
 4. Restart services
 ```
 sudo service mongodb restart
