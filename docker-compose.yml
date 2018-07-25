@@ -1,0 +1,111 @@
+version: '2'
+services:
+    sharelatex:
+        restart: always
+        image: sharelatex/sharelatex
+        container_name: sharelatex
+        depends_on:
+            - mongo
+            - redis
+        privileged: true
+        ports:
+            - 80:80
+        links:
+            - mongo
+            - redis
+        volumes:
+            - ~/sharelatex_data:/var/lib/sharelatex
+            - /var/run/docker.sock:/var/run/docker.sock
+            #- /var/clsi/compiles:/var/www/sharelatex/clsi/compiles
+        environment:
+            SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
+            SHARELATEX_REDIS_HOST: redis
+            SHARELATEX_APP_NAME: ShareLaTeX UNIMORE
+
+            ## Set site default language
+            SHARELATEX_SITE_LANGUAGE: it
+
+            ## Set for SSL via nginx-proxy
+            #VIRTUAL_HOST: 103.112.212.22
+
+            # SHARELATEX_SITE_URL: http://aurora.ing.unimore.it
+            SHARELATEX_NAV_TITLE: ShareLaTeX UNIMORE
+            # SHARELATEX_HEADER_IMAGE_URL: https://upload.wikimedia.org/wikipedia/commons/4/42/Logo-unimore.png
+            SHARELATEX_HEADER_IMAGE_URL: https://www.almalaurea.it/sites/almalaurea.it/files/styles/news_foglia/public/news/immagini/unimoretransazioni.png
+            SHARELATEX_ADMIN_EMAIL: sharelatex.unimore@gmail.com
+
+            SHARELATEX_LEFT_FOOTER: '[{"text": "Powered by <a href=\"https://www.sharelatex.com\">ShareLaTeX</a> 2016"}]'
+            SHARELATEX_RIGHT_FOOTER: '[{"text": "Installed by Cristian Mercadante"} ]'
+
+            SHARELATEX_EMAIL_FROM_ADDRESS: 'sharelatex.unimore@gmail.com'
+            SHARELATEX_EMAIL_REPLY_TO: 'noreply.sharelatex@unimore.it'
+
+            # SHARELATEX_EMAIL_AWS_SES_ACCESS_KEY_ID: 
+            # SHARELATEX_EMAIL_AWS_SES_SECRET_KEY: 
+
+            SHARELATEX_EMAIL_SMTP_HOST: smtp.gmail.com
+            SHARELATEX_EMAIL_SMTP_PORT: 465
+            SHARELATEX_EMAIL_SMTP_SECURE: 'true'
+            SHARELATEX_EMAIL_SMTP_USER: sharelatex.unimore@gmail.com
+            SHARELATEX_EMAIL_SMTP_PASS: 213808Unimore
+            SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH: 'true'
+            HARELATEX_EMAIL_SMTP_IGNORE_TLS: 'false'
+            # SHARELATEX_CUSTOM_EMAIL_FOOTER: "<div>This system is run by department x </div>"
+
+            ################
+            ## Server Pro ##
+            ################
+
+            # SANDBOXED_COMPILES: 'true'
+            
+            # SANDBOXED_COMPILES_SIBLING_CONTAINERS: 'true'
+            # SANDBOXED_COMPILES_HOST_DIR: '/var/clsi/compiles'
+
+            ## Works with test LDAP server shown at bottom of docker compose
+            # SHARELATEX_LDAP_URL: 'ldap://ldap:389'
+            # SHARELATEX_LDAP_SEARCH_BASE: 'ou=people,dc=planetexpress,dc=com'
+            # SHARELATEX_LDAP_SEARCH_FILTER: '(uid={{username}})'
+            # SHARELATEX_LDAP_BIND_DN: 'cn=admin,dc=planetexpress,dc=com'
+            # SHARELATEX_LDAP_BIND_CREDENTIALS: 'GoodNewsEveryone'
+            # SHARELATEX_LDAP_EMAIL_ATT: 'mail'
+            # SHARELATEX_LDAP_NAME_ATT: 'cn'
+            # SHARELATEX_LDAP_LAST_NAME_ATT: 'sn'
+            # SHARELATEX_LDAP_UPDATE_USER_DETAILS_ON_LOGIN: 'true'
+
+            # SHARELATEX_TEMPLATES_USER_ID: "578773160210479700917ee5"
+
+            # SHARELATEX_PROXY_LEARN: "true"
+
+    mongo:
+        restart: always
+        image: mongo
+        container_name: mongo
+        expose:
+            - 27017
+        volumes:
+            - ~/mongo_data:/data/db
+
+    redis:
+        restart: always
+        image: redis
+        container_name: redis
+        expose:
+            - 6379
+        volumes:
+            - ~/redis_data:/data
+
+    # ldap:
+    #    restart: always
+    #    image: rroemhild/test-openldap
+    #    container_name: ldap
+    #    expose:
+    #        - 389
+# nginx-proxy:
+#     image: jwilder/nginx-proxy
+#     container_name: nginx-proxy
+#     ports:
+#       #- "80:80"
+#       - "443:443"
+#     volumes:
+#       - /var/run/docker.sock:/tmp/docker.sock:ro
+#       - /home/sharelatex/tmp:/etc/nginx/certs
