@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo Eseguo "mongodump"
+sudo docker exec mongo mongodump
+
+echo ------------------------
 echo Sincronizzo \"mongodump_data\"
 rsync -av ~/mongodump_data ~/sincro_data/
 
