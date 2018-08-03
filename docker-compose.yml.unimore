@@ -16,8 +16,10 @@ services:
         volumes:
             - ~/sharelatex_data:/var/lib/sharelatex
             - /var/run/docker.sock:/var/run/docker.sock
+            - ~/sharelatex_texlive:/usr/local/texlive/2018
             #- /var/clsi/compiles:/var/www/sharelatex/clsi/compiles
         environment:
+            PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/texlive/2018/bin/x86_64-linux
             SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
             SHARELATEX_REDIS_HOST: redis
             SHARELATEX_APP_NAME: ShareLaTeX UNIMORE
@@ -84,6 +86,7 @@ services:
             - 27017
         volumes:
             - ~/mongo_data:/data/db
+            - ~/mongodump_data:/dump
 
     redis:
         restart: always
