@@ -11,7 +11,6 @@ esac
 
 # Assegnamenti
 D=$1
-T=$2
 TEX=0
 
 # Controllo $D directory traversabile
