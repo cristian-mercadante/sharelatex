@@ -7,12 +7,16 @@ services:
         depends_on:
             - mongo
             - redis
+              # - nginx-proxy
         privileged: true
         ports:
             - 80:80
+            #- 443:443
+            #- 5000:5000
         links:
             - mongo
             - redis
+              # - nginx-proxy
         volumes:
             - ~/sharelatex_data:/var/lib/sharelatex
             - /var/run/docker.sock:/var/run/docker.sock
@@ -22,25 +26,31 @@ services:
             PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/texlive/2018/bin/x86_64-linux
             SHARELATEX_MONGO_URL: mongodb://mongo/sharelatex
             SHARELATEX_REDIS_HOST: redis
-            SHARELATEX_APP_NAME: ShareLaTeX UNIMORE
+            SHARELATEX_APP_NAME: ShareLaTeX AImageLab
 
             ## Set site default language
-            SHARELATEX_SITE_LANGUAGE: it
+            # it = italiano
+            # en = english
+            SHARELATEX_SITE_LANGUAGE: en
 
             ## Set for SSL via nginx-proxy
-            #VIRTUAL_HOST: 103.112.212.22
+            VIRTUAL_HOST: 103.112.212.22
+            
+            SHARELATEX_SECURE_COOKIE: 'true'
+            SHARELATEX_BEHIND_PROXY: 'true'
 
-            # SHARELATEX_SITE_URL: http://aurora.ing.unimore.it
-            SHARELATEX_NAV_TITLE: ShareLaTeX UNIMORE
+            SHARELATEX_SITE_URL: https://sharelatex.ing.unimore.it
+            SHARELATEX_NAV_TITLE: ShareLaTeX AImageLab
             # SHARELATEX_HEADER_IMAGE_URL: https://upload.wikimedia.org/wikipedia/commons/4/42/Logo-unimore.png
-            SHARELATEX_HEADER_IMAGE_URL: https://www.almalaurea.it/sites/almalaurea.it/files/styles/news_foglia/public/news/immagini/unimoretransazioni.png
+            # SHARELATEX_HEADER_IMAGE_URL: https://www.almalaurea.it/sites/almalaurea.it/files/styles/news_foglia/public/news/immagini/unimoretransazioni.png
+            SHARELATEX_HEADER_IMAGE_URL: http://imagelab.ing.unimore.it/files2/sharelatex/logo_unimore.png
             SHARELATEX_ADMIN_EMAIL: sharelatex.unimore@gmail.com
 
-            SHARELATEX_LEFT_FOOTER: '[{"text": "Powered by <a href=\"https://www.sharelatex.com\">ShareLaTeX</a> 2016"}]'
-            SHARELATEX_RIGHT_FOOTER: '[{"text": "Installed by Cristian Mercadante"} ]'
+            SHARELATEX_LEFT_FOOTER: '[{"text":"Powered by <a href=\"http://imagelab.ing.unimore.it\" alt=\"AImageLab\"><img src=\"http://imagelab.ing.unimore.it/files2/sharelatex/aimagelab.png\" height=\"20\"></a>"}]'
+            SHARELATEX_RIGHT_FOOTER: '[{"text": "Managed by F. Bolelli"}]'
 
             SHARELATEX_EMAIL_FROM_ADDRESS: 'sharelatex.unimore@gmail.com'
-            SHARELATEX_EMAIL_REPLY_TO: 'noreply.sharelatex@unimore.it'
+            SHARELATEX_EMAIL_REPLY_TO: 'noreply.sharelatex.unimore@gmail.com'
 
             # SHARELATEX_EMAIL_AWS_SES_ACCESS_KEY_ID: 
             # SHARELATEX_EMAIL_AWS_SES_SECRET_KEY: 
@@ -49,9 +59,9 @@ services:
             SHARELATEX_EMAIL_SMTP_PORT: 465
             SHARELATEX_EMAIL_SMTP_SECURE: 'true'
             SHARELATEX_EMAIL_SMTP_USER: sharelatex.unimore@gmail.com
-            SHARELATEX_EMAIL_SMTP_PASS: 213808Unimore
+            SHARELATEX_EMAIL_SMTP_PASS: #p#a#s#s#w#o#r#d#
             SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH: 'true'
-            HARELATEX_EMAIL_SMTP_IGNORE_TLS: 'false'
+            SHARELATEX_EMAIL_SMTP_IGNORE_TLS: 'false'
             # SHARELATEX_CUSTOM_EMAIL_FOOTER: "<div>This system is run by department x </div>"
 
             ################
@@ -97,18 +107,20 @@ services:
         volumes:
             - ~/redis_data:/data
 
-    # ldap:
-    #    restart: always
-    #    image: rroemhild/test-openldap
-    #    container_name: ldap
-    #    expose:
-    #        - 389
-# nginx-proxy:
-#     image: jwilder/nginx-proxy
-#     container_name: nginx-proxy
-#     ports:
-#       #- "80:80"
-#       - "443:443"
-#     volumes:
-#       - /var/run/docker.sock:/tmp/docker.sock:ro
-#       - /home/sharelatex/tmp:/etc/nginx/certs
+#ldap:
+#    restart: always
+#    image: rroemhild/test-openldap
+#    container_name: ldap
+#    expose:
+#        - 389
+    nginx-proxy:
+        image: jwilder/nginx-proxy
+        container_name: nginx-proxy
+        ports:
+                #- "80:80"
+            - "443:443"
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+            - /home/sharelatex/tmp:/etc/nginx/certs
+            - ~/sharelatex.ing.unimore.it:/etc/nginx/cert
+            - ~/nginx_confd:/etc/nginx/conf.d
